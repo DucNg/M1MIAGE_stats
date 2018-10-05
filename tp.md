@@ -358,5 +358,16 @@ Cauchy ne suit pas la loi normale.
 ## Exercice 4
 
 ```r
+estimProportion = function(echantillon,alpha) {
+	p = sum(echantillon) / length(echantillon) # Proportion de 1 dans tab
+	# alpha # niveau de confiance
+	n = length(echantillon) # taille de l'échantillon
+	# On veut [p-f;p+f] avec f =
+	f = sqrt(p*(1-p)/n) * qnorm((1+alpha)/2)
 
+	c(p-f,p+f)
+}
+
+echantillon = sample(c(0,1),3000,replace = TRUE) # echantillon de {0,1}
+estimProportion(echantillon,0.95)
 ```
