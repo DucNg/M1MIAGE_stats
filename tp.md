@@ -359,7 +359,7 @@ Cauchy ne suit pas la loi normale.
 
 ```r
 estimProportion = function(echantillon,alpha) {
-	p = sum(echantillon) / length(echantillon) # Proportion de 1 dans tab
+	p = sum(echantillon) / length(echantillon) # Proportion de 1 dans l'échantillon
 	# alpha # niveau de confiance
 	n = length(echantillon) # taille de l'échantillon
 	# On veut [p-f;p+f] avec f =
@@ -370,4 +370,9 @@ estimProportion = function(echantillon,alpha) {
 
 echantillon = sample(c(0,1),3000,replace = TRUE) # echantillon de {0,1}
 estimProportion(echantillon,0.95)
+
+echantillonBernoulli = function(n,p) {
+	#sample(c(0,1),n,replace = TRUE,prob=p)
+	rbinom(n,1,p)
+}
 ```
