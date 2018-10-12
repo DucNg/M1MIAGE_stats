@@ -369,6 +369,9 @@ estimProportion = function(echantillon,alpha) {
 }
 
 echantillon = sample(c(0,1),3000,replace = TRUE) # echantillon de {0,1}
+# sample prend en paramètre un échantillon et fait un tirage dessus.
+# replace défini si le tirage est avec remise ou nan.
+# dans notre cas on est obligé de faire une mise (ex : on a une seule pièce)
 estimProportion(echantillon,0.95)
 
 echantillonBernoulli = function(n,p) {
@@ -392,6 +395,41 @@ testIntervalle = function(k,n,alpha,p0) {
 	estimProportion(vraie,alpha)
 }
 
-testIntervalle(1000,60,0.95,0.4)
-testIntervalle(1000,10,0.95,0.4)
+> testIntervalle(1000,60,0.95,0.4)
+[1] 0.9263961 0.9556039
+> testIntervalle(11000,60,0.95,0.4)
+[1] 0.9294541 0.9387277
+> testIntervalle(1000,10,0.95,0.4)
+[1] 0.879242 0.916758
+> testIntervalle(1000,100,0.95,0.001)
+[1] 0.08048908 0.11751092
+```
+
+Plus on a de n, plus l'intervalle de confiance est proche de 1. Plus l'échantillon est grand plus on peut avoir de confiance dans notre intervalle.
+
+Cependant si on réduit p0, l'intervalle de confiance diminu énormément, pour une précision très faible, moins de confiance.
+
+## Exercice 5
+
+```r
+pop = runif(1000,min=2,max=6) #1.
+mean(pop) #2.
+
+tirageRemise = function(n) {
+	pop = runif(n,min=2,max=6)
+	sample(pop,n,replace=TRUE) # tirage avec remise de nombre d'éléments de la pop
+}
+
+estimationMoyenne = function(echantillon,alpha) { # WIP
+	p = sum(echantillon) / length(echantillon) # Proportion de 1 dans l'échantillon
+	# alpha # niveau de confiance
+	n = length(echantillon) # taille de l'échantillon
+	m = mean(echantillon) # moyenne échantillon
+	tmp = echantillon-m # chaque case moins moyenne
+	o = sqrt(1/(n-1)) * sum(tmp)^2 # écart-type
+	# On veut [m-f;m+f] avec f =
+	f = o/sqrt(n) * qt((1+alpha)/2,n-1) # Les paramètres sont inversés par rapport au cours. n-1 est le degré de liberté et 1 + alpha / 2 est le vecteur de probabilité
+
+	c(m-f,m+f)
+}
 ```
