@@ -375,4 +375,23 @@ echantillonBernoulli = function(n,p) {
 	#sample(c(0,1),n,replace = TRUE,prob=p)
 	rbinom(n,1,p)
 }
+
+testIntervalle = function(k,n,alpha,p0) {
+	echan = c()
+	vraie = c()
+	for (i in 1:k) {
+		echan = echantillonBernoulli(n,p0) # On génère k échantillons
+		res = estimProportion(echan,alpha) # Intervalle de confiance pour chacun des échantillons
+		if (p0 > res[1] && p0 < res[2]) {
+			vraie[i] = 1
+		}
+		else {
+			vraie[i] = 0
+		}
+	}
+	estimProportion(vraie,alpha)
+}
+
+testIntervalle(1000,60,0.95,0.4)
+testIntervalle(1000,10,0.95,0.4)
 ```
