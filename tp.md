@@ -466,7 +466,79 @@ centIntervalesNorm = function(alpha) {
 	}
 	cpt / 100 # On renvoi la proportion de m0 dans l'intervalle
 }
+
+centIntervalesNorm(0.95)
 ```
 
 # TP3
+
+## Exercice 1
+
+```r
+comparaisonMoyenneRef = function(ech,m0,alpha,h1) {
+	n = length(ech) # taille de l'échantillon
+	# m0 moyenne de référence
+	x = mean(ech) # moyenne de l'échantillon
+	tmp = ech-x # chaque case moins moyenne
+	o = sqrt(1/(n-1)) * sum(tmp^2) # écart-type
+	# alpha risque de 1er espèce
+
+	if (n >= 30) {
+	# On considère n >= 30. Pour chaque cas on calcul S ;
+		if (h1 == "!="){
+			s = o/sqrt(n) * qnorm(1-(alpha/2))
+			if (x > m0+s || x < m0-s) "H1" else "H0" # Si la condition est vraie on rejette H0
+		}
+		else if (h1 == "<"){
+			s = o/sqrt(n) * qnorm(1-alpha)
+			if (x < m0-s) "H1" else "H0"
+		}
+		else if (h1 == ">"){
+			s = o/sqrt(n) * qnorm(1-alpha)
+			if (x > m0+s) "H1" else "H0"
+		}
+		else{
+			paste("Invalid caracter ", h1)
+		}
+	}
+	else {
+	# On considère que l'échantillon suit une loi normale.
+		"WIP"
+	}
+}
+
+simuleTestCompaMoyenne = function(pop,k,n,m0,alpha,h1) {
+	cpt = 0 # Nombre de test ayant retourné H0
+	for (i in 1:k) { # On répète k fois :
+		ech = sample(pop,n) # Tirage de n éléments depuis pop
+		test = comparaisonMoyenneRef(ech,m0,alpha,h1)
+		if (test == "H0") cpt = cpt+1 # Si le test de comparaison renvoi H0 on incrémente
+	}
+	cpt/k # Proportion de tests ayant retourné H0
+}
+
+pop = runif(1000,min=0,max=30)
+m = mean(pop) # moyenne sur la population
+m
+
+simuleTestCompaMoyenne(pop,10,50,m,0.67,"!=") # m = m0
+simuleTestCompaMoyenne(pop,10,50,m,0.67,"<") # m = m0
+simuleTestCompaMoyenne(pop,10,50,m,0.67,">") # m = m0
+```
+
+4. Pour != on obtient une proportion de 1 et pour les deux autres une proportion de 0. Avec m=m0 il est normal que le test d'égalité soit toujours vrai mais pas les autres.
+
+```r
+msample = runif(50,min=0,max=30) # 50 valeurs entre 0 et 30
+pop = c()
+for (i in msample) { # i prend succéssivement une valeur entre 0 et 30, 50 fois
+	popi = rnorm(20,mean=i) # Population de moyenne m entre 0 et 30. n = 20 car au final on veut une population de 1000, 50*20=1000
+	pop = c(pop,popi) # On concatène les vecteurs pour obtenir notre population
+}
+simuleTestCompaMoyenne(pop,200,100,15,0.90,"!=")
+simuleTestCompaMoyenne(pop,200,100,15,0.90,">")
+simuleTestCompaMoyenne(pop,200,100,15,0.90,"<")
+```
+
+Qu'est-ce qu'on fait après j'ai rien compris ?
 
