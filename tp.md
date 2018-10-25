@@ -542,3 +542,28 @@ simuleTestCompaMoyenne(pop,200,100,15,0.90,"<")
 
 Qu'est-ce qu'on fait après j'ai rien compris ?
 
+## Exercice 2
+
+```r
+distanceKhi2 = function(vObserve,vTheorique) {
+	result = 0 # somme total
+	for (i in 1:length(vObserve)) { # On considère que les deux échantillons ont la même taille
+		result = result + ((vObserve[i]-vTheorique[i])/vTheorique[i])^2
+	}
+	result
+}
+
+testKhi2 = function(vObserve,vTheorique,alpha) {
+	dist = distanceKhi2(vObserve,vTheorique) # Calcul de la distance du khi2
+	#seuil = qchisq(alpha,dist) # Calcul du seuil de rejet par les quantiles de la loi du khi2
+	seuil = qchisq(alpha,5) # 5% de proba que la décision soit fausse
+	if (dist > seuil) "H1" else "H0" # Si la distance est supérieur au seuil de rejet on rejette H0.
+}
+
+dée = sample(seq(1,6),100,TRUE) # Dée normal non pipé ppr
+déePipé = sample(seq(5,6),100,TRUE) # Dée méga pipé qui donne que des 5 et des 6
+> testKhi2(dée,déePipé,0.95)
+[1] "H1"
+> testKhi2(dée,dée,0.95) # Les dés sont identique donc pas de distance
+[1] "H0"
+```
