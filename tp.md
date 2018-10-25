@@ -420,16 +420,53 @@ tirageRemise = function(n) {
 	sample(pop,n,replace=TRUE) # tirage avec remise de nombre d'éléments de la pop
 }
 
-estimationMoyenne = function(echantillon,alpha) { # WIP
+estimationMoyenne = function(echantillon,alpha) {
 	p = sum(echantillon) / length(echantillon) # Proportion de 1 dans l'échantillon
 	# alpha # niveau de confiance
 	n = length(echantillon) # taille de l'échantillon
 	m = mean(echantillon) # moyenne échantillon
 	tmp = echantillon-m # chaque case moins moyenne
-	o = sqrt(1/(n-1)) * sum(tmp)^2 # écart-type
+	o = sqrt(1/(n-1)) * sum(tmp^2) # écart-type
 	# On veut [m-f;m+f] avec f =
 	f = o/sqrt(n) * qt((1+alpha)/2,n-1) # Les paramètres sont inversés par rapport au cours. n-1 est le degré de liberté et 1 + alpha / 2 est le vecteur de probabilité
-
 	c(m-f,m+f)
 }
+
+echantillon = tirageRemise(10)
+estimationMoyenne(echantillon,0.25)
+
+centIntervalesConfiance = function(alpha,n) {
+	cpt = 0 # Compteur pour proportion
+	for (i in 1:100) {
+		echantillon = tirageRemise(n) # On génère 100 échantillons de taille n
+		m0 = mean(echantillon) # Calcul de m0, la "vraie valeur m0"
+		intervalle = estimationMoyenne(echantillon,alpha) # Calcul d'un intervalle de confiance asymptotique de la moyenne
+		if (m0 > intervalle[1] && m0 < intervalle[2]) cpt = cpt + 1 # On incrémente le compteur si m0 est dans l'intervalle
+	}
+	cpt / 100 # On renvoi la proportion de m0 dans l'intervalle
+}
+
+centIntervalesConfiance(0.95,7)
+centIntervalesConfiance(0.95,50)
 ```
+Quelque soit la valeur de n on obtient toujours une proportion de 1. L'intervalle est suffisament fiable pour ne jamais se tromper.
+
+## Exercice 6
+
+1 et 2 déjà fait à l'exerice précédent.
+
+```r
+centIntervalesNorm = function(alpha) {
+	cpt = 0 # Compteur pour proportion
+	for (i in 1:100) {
+		echantillon = rnorm(1000) # On génère 100 échantillons loi normal de taille 1000
+		m0 = mean(echantillon) # Calcul de m0, la "vraie valeur m0"
+		intervalle = estimationMoyenne(echantillon,alpha) # Calcul d'un intervalle de confiance asymptotique de la moyenne
+		if (m0 > intervalle[1] && m0 < intervalle[2]) cpt = cpt + 1 # On incrémente le compteur si m0 est dans l'intervalle
+	}
+	cpt / 100 # On renvoi la proportion de m0 dans l'intervalle
+}
+```
+
+# TP3
+
