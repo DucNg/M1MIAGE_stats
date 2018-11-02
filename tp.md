@@ -557,8 +557,8 @@ distanceKhi2 = function(vObserve,vTheorique) {
 testKhi2 = function(vObserve,vTheorique,alpha) {
 	dist = distanceKhi2(vObserve,vTheorique) # Calcul de la distance du khi2
 	#seuil = qchisq(alpha,dist) # Calcul du seuil de rejet par les quantiles de la loi du khi2
-	seuil = qchisq(alpha,5) # 5% de proba que la décision soit fausse
-	if (dist > seuil) "H1" else "H0" # Si la distance est supérieur au seuil de rejet on rejette H0.
+	seuil = qchisq(alpha,5) # c-1-r r nb paramètres
+	if (dist >= seuil) "H1" else "H0" # Si la distance est supérieur au seuil de rejet on rejette H0.
 }
 
 dée = sample(seq(1,6),100,TRUE) # Dée normal non pipé ppr
@@ -567,4 +567,57 @@ déePipé = sample(seq(5,6),100,TRUE) # Dée méga pipé qui donne que des 5 et 
 [1] "H1"
 > testKhi2(dée,dée,0.95) # Les dés sont identique donc pas de distance
 [1] "H0"
+
+nbi = function(ech) {
+	T = c()
+	k=max(ech) # L'échantillon va de 1 à k
+	for (i in 1:k) { # Chaque valeur de i de 1 à k
+		cpt = 0 # Nombre de fois où i apparrait
+		for (value in ech) {
+			if (i == value) cpt = cpt+1 # On parcours tout ech pour trouver i
+		}
+		T = c(T,cpt)
+	}
+	T
+}
+
+déeUniforme = round(runif(3000,1,6)) # Dée suivant exactement une loi uniforme (3000 lancés)
+pop = sample(seq(1, 6),3000,TRUE) # 3000 lancés d'un dée à 6 faces
+
+cpt = 0 # Somme des tests infructueux
+for (i in 1:200) {
+	ech = sample(pop,15,TRUE) # On prend 15 éléments dans la pop pour faire 200 tests sur la population, 15*200 = 3000
+
+	result = testKhi2(ech,déeUniforme,0.95) # 200 tests du Khi2 à 5%
+
+	if(result != "H0") cpt = cpt+1 # On évalue le nombre de tests ne donnant pas la bonne décision
+}
+cpt/200
+```
+
+96,5% des tests ne donnent pas la bonne décision, les lancés de dées ne sont pas très uniforme.
+
+### 5 et 6
+```r
+deeTruc = function(K,e) {
+	dee = seq(1, 6)
+	prob = c(1/6,1/6,1/6,1/6,(1/6)-e,(1/6)+e) # Proba de chaque face du dée de la 1 à la 6
+	sample(dee,K,TRUE,prob) # K tirage avec remise du dée avec les probabilités spécifiés
+}
+
+deeTruc(200,0.05)
+
+trenteE = seq(1/24, 1/6, length.out=30) # 30 e espacé régulièrement entre 1/24 et 1/6
+déeUniforme = round(runif(200,1,6)) # Dée suivant exactement une loi uniforme
+tabRes = c()
+for (i in trenteE) { # différentes valeurs de e
+	cpt=0
+	for (j in 1:200) { # 200 tests pour chaque e
+		tirage = deeTruc(200,i)
+		result = testKhi2(tirage,déeUniforme,0.95) # test du Khi2 à 5%
+		print(result)
+		if(result != "H0") cpt = cpt+1 # On évalue le nombre de tests ne donnant pas la bonne décision
+	}
+	tabRes = c(tabRes,cpt/200) # Sur 200 tests, x ne sont pas la bonne décision
+}
 ```
