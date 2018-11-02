@@ -557,7 +557,7 @@ distanceKhi2 = function(vObserve,vTheorique) {
 testKhi2 = function(vObserve,vTheorique,alpha) {
 	dist = distanceKhi2(vObserve,vTheorique) # Calcul de la distance du khi2
 	#seuil = qchisq(alpha,dist) # Calcul du seuil de rejet par les quantiles de la loi du khi2
-	seuil = qchisq(alpha,5) # c-1-r r nb paramètres
+	seuil = qchisq(alpha,5) # c-1-r | c nb colonnes, r nb paramètres
 	if (dist >= seuil) "H1" else "H0" # Si la distance est supérieur au seuil de rejet on rejette H0.
 }
 
@@ -620,4 +620,37 @@ for (i in trenteE) { # différentes valeurs de e
 	}
 	tabRes = c(tabRes,cpt/200) # Sur 200 tests, x ne sont pas la bonne décision
 }
+```
+
+La proportion est toujours 1, il doit y avoir un soucis avec testKhi2.
+
+## Exercice 3
+
+```r
+effectifsSiIndep = function(x,y) {
+	# TODO: les effectifs sont-ils indépendants ?
+
+	v = matrix(x,length(x),1) # Matrice colonne de x
+	w = matrix(y,length(y),1) # Matrice colonne de y
+	n = sum(x) # taille totale de l'effectif
+
+	(v%*%t(w)) / n # Produit de la matrice v avec la transposé de la matrice w divisé par l'effectif total. Donne la matrice contenant le tableau des effectifs théoriques
+}
+
+v = c(69,66,65)
+w = c(109,55,36)
+effectifsSiIndep(v,w)
+
+testKhi2Indep = function(tab,alpha) {
+	# tab # effectif normal
+	x = colSums(tab) # Somme des lignes
+	y = rowSums(tab) # Somme des colonnes
+	theorique = effectifsSiIndep(x,y) # Tableau des effectifs théoriques
+
+	dist = 0
+	for (i in nrow(tab)) {
+		dist = dist + distanceKhi2(tab[i,],theorique[i,]) # distance de Khi2 ligne à ligne
+	}
+	dist
+} 
 ```
