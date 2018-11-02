@@ -546,11 +546,12 @@ Qu'est-ce qu'on fait après j'ai rien compris ?
 
 ```r
 distanceKhi2 = function(vObserve,vTheorique) {
-	result = 0 # somme total
-	for (i in 1:length(vObserve)) { # On considère que les deux échantillons ont la même taille
-		result = result + ((vObserve[i]-vTheorique[i])/vTheorique[i])^2
+	k = 0 # Somme totale
+	for (i in 1:length(vObserve)) { # On considère que les effectifs sont de meme taille
+		tmp = ((vObserve[i]-vTheorique[i])^2) / vTheorique[i] # Calcul à i
+		k = k + tmp # Somme totale
 	}
-	result
+	k # Distance de Khi2 entre ces deux vecteurs
 }
 
 testKhi2 = function(vObserve,vTheorique,alpha) {
