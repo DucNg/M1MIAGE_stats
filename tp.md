@@ -646,7 +646,6 @@ testKhi2Indep = function(tab,alpha) {
 	x = colSums(tab) # Somme des lignes
 	y = rowSums(tab) # Somme des colonnes
 	theorique = effectifsSiIndep(x,y) # Tableau des effectifs théoriques
-	theorique
 
 	# Calcul de la distance entre l'effectif théorique et normal
 	dist = 0
@@ -668,5 +667,27 @@ binom3 = function(N) {
 
 	T = c(X,Y) # Concaténation des tableaux. T[i] suit la loi X, T[i+N] suit une loi de Y. Le tableau a une taille de 2N
 	T
+}
+
+binom3matrix = function(ech) {
+	N = length(ech)
+	t = matrix(0,3,5,TRUE)
+
+	for (i in 1:3) {
+		for(j in 0:4) {
+			couple1 = c(i,j)
+			cpt = 0 # Nombre de couple de i égaux
+			for (k in 1:N) {
+				couple2 = c(ech[k],ech[k+N]) # Prend succéssivement la valeur de chaque case du tableau
+				condition = sum(couple1 == couple2)
+				print(couple1)
+				print(couple2)
+				if(condition >= 2) { # On s'attends à avoir le résultat TRUE TRUE si les couples sont égaux. sum(TRUE TRUE) donne 2.
+					cpt = cpt + 1
+				}
+			}
+			t[i,j] = cpt # Le couple (i,j) tombe cpt fois
+		}
+	}
 }
 ```
