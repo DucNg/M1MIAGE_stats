@@ -634,7 +634,7 @@ effectifsSiIndep = function(x,y) {
 	w = matrix(y,length(y),1) # Matrice colonne de y
 	n = sum(x) # taille totale de l'effectif
 
-	(v%*%t(w)) / n # Produit de la matrice v avec la transposé de la matrice w divisé par l'effectif total. Donne la matrice contenant le tableau des effectifs théoriques
+	t((v%*%t(w)) / n) # Produit de la matrice v avec la transposé de la matrice w divisé par l'effectif total. Donne la matrice contenant le tableau des effectifs théoriques
 }
 
 v = c(69,66,65)
@@ -646,11 +646,27 @@ testKhi2Indep = function(tab,alpha) {
 	x = colSums(tab) # Somme des lignes
 	y = rowSums(tab) # Somme des colonnes
 	theorique = effectifsSiIndep(x,y) # Tableau des effectifs théoriques
+	theorique
 
+	# Calcul de la distance entre l'effectif théorique et normal
 	dist = 0
 	for (i in nrow(tab)) {
 		dist = dist + distanceKhi2(tab[i,],theorique[i,]) # distance de Khi2 ligne à ligne
 	}
-	dist
-} 
+	# Calcul du seuil de rejet
+	s = qchisq(1-alpha,(length(x)-1)*(length(y)-1))
+
+	if(dist >= s) "H1" else "H0" # Si K >= s on rejette H0
+}
+
+a = matrix(c(v,w),3,2)
+testKhi2Indep(a,0.5)
+
+binom3 = function(N) {
+	X = round(runif(N,1,3)) # Loi X uniforme sur 1,2,3
+	Y = rbinom(N,4,1/4) # Loi Y suit une loi binomiale (4,1/4)
+
+	T = c(X,Y) # Concaténation des tableaux. T[i] suit la loi X, T[i+N] suit une loi de Y. Le tableau a une taille de 2N
+	T
+}
 ```
