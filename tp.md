@@ -670,7 +670,7 @@ binom3 = function(N) {
 }
 
 binom3matrix = function(ech) {
-	N = length(ech)
+	N = length(ech)/2
 	t = matrix(0,3,5,TRUE)
 
 	for (i in 1:3) {
@@ -680,8 +680,6 @@ binom3matrix = function(ech) {
 			for (k in 1:N) {
 				couple2 = c(ech[k],ech[k+N]) # Prend succéssivement la valeur de chaque case du tableau
 				condition = sum(couple1 == couple2)
-				print(couple1)
-				print(couple2)
 				if(condition >= 2) { # On s'attends à avoir le résultat TRUE TRUE si les couples sont égaux. sum(TRUE TRUE) donne 2.
 					cpt = cpt + 1
 				}
@@ -689,5 +687,10 @@ binom3matrix = function(ech) {
 			t[i,j] = cpt # Le couple (i,j) tombe cpt fois
 		}
 	}
+	t
 }
+
+ech = binom3(25)
+ech
+binom3matrix(ech)
 ```
