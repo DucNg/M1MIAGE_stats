@@ -722,26 +722,28 @@ estimRegLin = function(X,Y,intercept) {
 	obj$x = X
 	obj$y = Y
 	obj$intercept = intercept
-	obj$p = length(X) # Nombre de variables explicatives
+	obj$p = ncol(X) # Nombre de variables explicatives
 	n = nrow(X) # Nombre de lignes de X
 
-	obj$beta = (t(X)%*%X)^-1 %*% t(X)%*%Y # Tableau des estimations des coef de la RL
+	obj$beta = solve(t(X)%*%X) %*% (t(X)%*%Y) # Tableau des estimations des coef de la RL
 
 	Ychapeau = X%*%obj$beta
 	obj$resid = Y - Ychapeau # Tableau des résidus
 
 
-	obj$SCR = (sum(Ychapeau-mean(Ychapeau))^2) / (sum(Y-mean(Y))^2) # Somme des carrés des résidus
+	# obj$SCR = (sum(Ychapeau-mean(Ychapeau))^2) / (sum(Y-mean(Y))^2) # Somme des carrés des résidus
+	# obj$SCR = sum(Y-Ychapeau)^2
+	obj$SCR = t(Y-X%*%obj$beta) %*% (Y-X%*%obj$beta)
 
 	obj$sigma = sqrt((1/(n-obj$p-1)) * sum(Y-Ychapeau)^2) # Estimation du niveau de bruit (sigma chapeau)
 
 	obj
 }
 
-x1 = c(124,49,181,4,22,152,75,54,43,41,12,22,16,10,63,170)
-x2 = c(33,31,38,17,20,29,30,29,35,31,23,21,8,23,37,40)
+x1 = c(124,49,181,4,22,152,75,54,43,41,17,22,16,10,63,170)
+x2 = c(33,31,38,17,20,39,30,29,35,31,23,21,8,23,37,40)
 X = matrix(c(x1,x2),length(x1),2)
-Y = matrix(c(81,55,80,24,78,52,88,45,50,69,66,45,24,37,93,69),16,1)
+Y = matrix(c(81,55,80,24,79,52,88,45,50,69,66,45,24,37,93,69),16,1)
 X
 Y
 
